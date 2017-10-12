@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
     method: 'GET',
     datatype: 'json'
   }).done(function(data){
-    
+
     for (var i = 0; i < data['candidates'].length; i++){
 
       var $li = $('<li>', {class: 'candidate' + (i + 1)}).text('Name: ' + data["candidates"][i]["name"] + '  |  Votes: ' + data["candidates"][i]["votes"]);
@@ -24,8 +24,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
       $('.candidate' + (i + 1) + '-form').append($hidden).append($submit);
 
-    };
+
+      $('.candidate' + (i + 1)).on('submit', function(e){
+        e.preventDefault();
+        var $voteValue = this.querySelector('input[type=hidden]').value;
+        var self = $(this)
+
+        $.ajax ({
+          url: 'https://bb-election-api.herokuapp.com/vote?id=' + $voteValue,
+          method: 'POST',
+          datatype: 'json'
+        }).done(function(){
+          location.reload();
+
+        }).fail(function(){
+          alert('Uh Oh. Something went wrong')
+
+        });
+        });
+
+      }
+    })
+
   });
-
-
-});
